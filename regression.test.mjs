@@ -9,9 +9,9 @@ assert.equal(new Set(suite.cases.map(c=>c.id)).size,suite.cases.length,'case IDs
 const endpoint=process.env.CURBI_API||'https://curbi.io/api/v1/check';
 const response=fetch(endpoint,{
  method:'POST',signal:AbortSignal.timeout(15000),redirect:'error',
- headers:{'Content-Type':'application/json'},
+ headers:{'Content-Type':'application/json',Accept:'application/json','User-Agent':'Curbi-Regression-Starter/1.0'},
  body:JSON.stringify({version:suite.version,policy:suite.policy,cases:suite.cases.map(({id,reply,record})=>({id,reply,...(record?{record}:{})}))}),
-}).then(async r=>{const body=await r.json();assert.equal(r.status,200,JSON.stringify(body.error||body));assert.ok(Array.isArray(body.results));assert.equal(body.results.length,suite.cases.length);assert.equal(new Set(body.results.map(c=>c.id)).size,body.results.length,'response IDs must be unique');return body;});
+}).then(async r=>{assert.equal(r.status,200,'Check API HTTP '+r.status+'; this may be an endpoint, rate-limit or access error, not a changed verdict');assert.match(r.headers.get('content-type')||'',/application\/json/i,'Expected JSON from Check API; got '+r.headers.get('content-type'));const body=await r.json();assert.ok(Array.isArray(body.results));assert.equal(body.results.length,suite.cases.length);assert.equal(new Set(body.results.map(c=>c.id)).size,body.results.length,'response IDs must be unique');return body;});
 
 for(const c of suite.cases)test(c.id,async()=>{
  const {results}=await response,r=results.find(r=>r.id===c.id);

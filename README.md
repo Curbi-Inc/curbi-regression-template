@@ -45,4 +45,4 @@ A pass means no configured rule fired. A supplied DONE assertion is not independ
 
 This repository contains demo tests only, not Curbi's private implementation. MIT licensed. Public preview can change; a failure may mean API drift or network trouble rather than an agent defect.
 
-Prepared October 29, 2026. Live verification evidence is in the initial release commit/handoff. Support: [hello@curbi.io](mailto:hello@curbi.io).
+Verified against the live preview API on October 29, 2026: four synthetic cases passed locally. Hosted CI is qualified separately by its run result; a local pass is not proof that every network can reach the API. Non-200 or non-JSON responses fail closed with an endpoint/access error, rather than being treated as changed verdicts. Support: [hello@curbi.io](mailto:hello@curbi.io).
