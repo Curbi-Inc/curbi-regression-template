@@ -10,7 +10,7 @@ Use this template or fork this repository, then run:
 node --test
 ```
 
-Requires Node 20+ and network access to `https://curbi.io`. No install step. The included GitHub Actions workflow runs the same command on pushes and pull requests with read-only repository permissions.
+Requires Node 20+ and network access to `https://curbi.io`. No install step. The included GitHub Actions workflow runs the same command on pushes and pull requests with read-only repository permissions. CI explicitly uses Curbi's existing public Cloudflare Pages host (`https://curbi-landing.pages.dev/api/v1/check`), which serves the same deployed Worker. The canonical domain returned HTTP 403 from the first hosted runner; that access issue remains separately open. There is no automatic endpoint fallback, and preview limits still apply.
 
 The four cases check an approved price, a wrong price, an unrecorded refund claim, and a caller-supplied DONE assertion. A failed expectation exits nonzero. Edit one expected rule to prove the test fails, then restore it.
 

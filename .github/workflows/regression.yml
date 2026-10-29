@@ -6,6 +6,9 @@ jobs:
   regression:
     runs-on: ubuntu-latest
     timeout-minutes: 3
+    env:
+      # Same public Curbi deployment; canonical-domain access remains separately checked.
+      CURBI_API: https://curbi-landing.pages.dev/api/v1/check
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
