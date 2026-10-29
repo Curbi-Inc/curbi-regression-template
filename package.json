@@ -1,0 +1,10 @@
+{
+ "name":"curbi-regression-template",
+ "version":"1.0.0",
+ "private":true,
+ "type":"module",
+ "description":"Four synthetic agent-reply regressions against Curbi's public preview API.",
+ "scripts":{"test":"node --test"},
+ "engines":{"node":">=20"},
+ "license":"MIT"
+}

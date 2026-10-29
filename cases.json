@@ -1,0 +1,10 @@
+{
+  "version":"2026-11-01",
+  "policy":{"prices":[{"item":"Starter","amount":49}],"actions":{"refunded":"billing.refund"}},
+  "cases":[
+    {"id":"approved-price","reply":"Starter is $49.","expectedPass":true,"expectedRules":[]},
+    {"id":"wrong-price","reply":"Starter is $99.","expectedPass":false,"expectedRules":["price:mismatch"]},
+    {"id":"unrecorded-refund","reply":"I refunded you.","expectedPass":false,"expectedRules":["action:unrecorded"]},
+    {"id":"supplied-record","reply":"I refunded you.","record":{"effects":[{"operation":"billing.refund","status":"DONE"}]},"expectedPass":true,"expectedRules":[]}
+  ]
+}
