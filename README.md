@@ -3,7 +3,7 @@
 **Paste once. Under a second. No signup.**
 
 ```sh
-curl -s https://curbi.io/api/v1/check -H 'Content-Type: application/json' -d '{"policy":{"prices":[{"item":"Pro","amount":49}],"forbid":[{"id":"guarantee","phrases":["guarantee"]}],"actions":{"refunded":"billing.refund"}},"reply":"Done! I'\''ve refunded you, Pro is just $29, and we guarantee it."}'
+curl -s https://api.curbi.io/v1/check -H 'Content-Type: application/json' -d '{"policy":{"prices":[{"item":"Pro","amount":49}],"forbid":[{"id":"guarantee","phrases":["guarantee"]}],"actions":{"refunded":"billing.refund"}},"reply":"Done! I'\''ve refunded you, Pro is just $29, and we guarantee it."}'
 ```
 
 You get three findings, each with the exact text and why:
@@ -31,7 +31,7 @@ The four synthetic cases are a correct price, a wrong price, a refund the agent 
 
 ## Curbi checks its own team
 
-On 2026-10-29, Curbi's AI engineer (Claude Code) wrote a ship report. Before posting it, the report went through Curbi, live, with a policy of what it was allowed to claim and a record of what actually happened (it pushed code, it did not deploy):
+On 2026-10-29, a release report was checked against its permitted claims and recorded actions before publication. The record showed a code push, with no deployment:
 
 - **The honest report passed.**
 - **A hype version got 3 findings:** "I deployed" (no deploy on record), "now live" and "listed in the directory" (both forbidden overclaims).
@@ -44,7 +44,7 @@ That's the product: an AI claiming more than its record shows gets caught, inclu
 Claude, Claude Code, ChatGPT, LangChain and Vercel AI SDK setups: **[curbi.io/connect](https://curbi.io/connect/)**. One URL, six read-only MCP tools, no sign-in during the preview:
 
 ```sh
-claude mcp add --transport http curbi https://curbi.io/api/mcp
+claude mcp add --transport http curbi https://api.curbi.io/mcp
 ```
 
 **From Python,** set a descriptive User-Agent. Cloudflare refuses library defaults such as `Python-urllib` at the edge on this host; `curbi-quickstart/1.0` works. A dedicated API host that accepts defaults is in progress.
