@@ -1,7 +1,7 @@
 {
   "object": "curbi.agent.start",
   "version": 1,
-  "endpoint": "https://curbi.io/api/mcp",
+  "endpoint": "https://api.curbi.io/mcp",
   "transport": "Streamable HTTP, JSON responses; no sessions",
   "headers": {
     "Content-Type": "application/json",

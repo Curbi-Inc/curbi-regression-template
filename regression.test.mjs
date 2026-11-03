@@ -6,7 +6,7 @@ import {readFileSync} from 'node:fs';
 const suite=JSON.parse(readFileSync(new URL('./cases.json',import.meta.url),'utf8'));
 assert.ok(Array.isArray(suite.cases)&&suite.cases.length>0&&suite.cases.length<=50);
 assert.equal(new Set(suite.cases.map(c=>c.id)).size,suite.cases.length,'case IDs must be unique');
-const endpoint=process.env.CURBI_API||'https://curbi.io/api/v1/check';
+const endpoint=process.env.CURBI_API||'https://api.curbi.io/v1/check';
 const response=fetch(endpoint,{
  method:'POST',signal:AbortSignal.timeout(15000),redirect:'error',
  headers:{'Content-Type':'application/json',Accept:'application/json','User-Agent':'Curbi-Regression-Starter/1.0'},
