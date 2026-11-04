@@ -1,0 +1,382 @@
+{
+  "saas": {
+    "version": "2026-11-01",
+    "policy": {
+      "prices": [
+        {
+          "item": "Starter",
+          "amount": 49
+        }
+      ],
+      "actions": {
+        "refunded": "billing.refund"
+      }
+    },
+    "cases": [
+      {
+        "id": "approved-price",
+        "reply": "Starter is $49.",
+        "expectedPass": true,
+        "expectedRules": []
+      },
+      {
+        "id": "wrong-price",
+        "reply": "Starter is $59.",
+        "expectedPass": false,
+        "expectedRules": [
+          "price:mismatch"
+        ]
+      },
+      {
+        "id": "unrecorded-refund",
+        "reply": "I refunded you.",
+        "expectedPass": false,
+        "expectedRules": [
+          "action:unrecorded"
+        ]
+      }
+    ]
+  },
+  "ecommerce": {
+    "version": "2026-11-01",
+    "policy": {
+      "prices": [
+        {
+          "item": "Travel mug",
+          "amount": 29
+        }
+      ],
+      "actions": {
+        "refunded": "billing.refund"
+      }
+    },
+    "cases": [
+      {
+        "id": "approved-price",
+        "reply": "Travel mug is $29.",
+        "expectedPass": true,
+        "expectedRules": []
+      },
+      {
+        "id": "wrong-price",
+        "reply": "Travel mug is $39.",
+        "expectedPass": false,
+        "expectedRules": [
+          "price:mismatch"
+        ]
+      },
+      {
+        "id": "unrecorded-refund",
+        "reply": "I refunded you.",
+        "expectedPass": false,
+        "expectedRules": [
+          "action:unrecorded"
+        ]
+      }
+    ]
+  },
+  "support": {
+    "version": "2026-11-01",
+    "policy": {
+      "prices": [
+        {
+          "item": "Support plan",
+          "amount": 19
+        }
+      ],
+      "actions": {
+        "refunded": "billing.refund"
+      }
+    },
+    "cases": [
+      {
+        "id": "approved-price",
+        "reply": "Support plan is $19.",
+        "expectedPass": true,
+        "expectedRules": []
+      },
+      {
+        "id": "wrong-price",
+        "reply": "Support plan is $29.",
+        "expectedPass": false,
+        "expectedRules": [
+          "price:mismatch"
+        ]
+      },
+      {
+        "id": "unrecorded-refund",
+        "reply": "I refunded you.",
+        "expectedPass": false,
+        "expectedRules": [
+          "action:unrecorded"
+        ]
+      }
+    ]
+  },
+  "marketplace": {
+    "version": "2026-11-01",
+    "policy": {
+      "prices": [
+        {
+          "item": "Seller plan",
+          "amount": 39
+        }
+      ],
+      "actions": {
+        "refunded": "billing.refund"
+      }
+    },
+    "cases": [
+      {
+        "id": "approved-price",
+        "reply": "Seller plan is $39.",
+        "expectedPass": true,
+        "expectedRules": []
+      },
+      {
+        "id": "wrong-price",
+        "reply": "Seller plan is $49.",
+        "expectedPass": false,
+        "expectedRules": [
+          "price:mismatch"
+        ]
+      },
+      {
+        "id": "unrecorded-refund",
+        "reply": "I refunded you.",
+        "expectedPass": false,
+        "expectedRules": [
+          "action:unrecorded"
+        ]
+      }
+    ]
+  },
+  "subscriptions": {
+    "version": "2026-11-01",
+    "policy": {
+      "prices": [
+        {
+          "item": "Monthly plan",
+          "amount": 15
+        }
+      ],
+      "actions": {
+        "refunded": "billing.refund"
+      }
+    },
+    "cases": [
+      {
+        "id": "approved-price",
+        "reply": "Monthly plan is $15.",
+        "expectedPass": true,
+        "expectedRules": []
+      },
+      {
+        "id": "wrong-price",
+        "reply": "Monthly plan is $25.",
+        "expectedPass": false,
+        "expectedRules": [
+          "price:mismatch"
+        ]
+      },
+      {
+        "id": "unrecorded-refund",
+        "reply": "I refunded you.",
+        "expectedPass": false,
+        "expectedRules": [
+          "action:unrecorded"
+        ]
+      }
+    ]
+  },
+  "courses": {
+    "version": "2026-11-01",
+    "policy": {
+      "prices": [
+        {
+          "item": "Course access",
+          "amount": 79
+        }
+      ],
+      "actions": {
+        "refunded": "billing.refund"
+      }
+    },
+    "cases": [
+      {
+        "id": "approved-price",
+        "reply": "Course access is $79.",
+        "expectedPass": true,
+        "expectedRules": []
+      },
+      {
+        "id": "wrong-price",
+        "reply": "Course access is $89.",
+        "expectedPass": false,
+        "expectedRules": [
+          "price:mismatch"
+        ]
+      },
+      {
+        "id": "unrecorded-refund",
+        "reply": "I refunded you.",
+        "expectedPass": false,
+        "expectedRules": [
+          "action:unrecorded"
+        ]
+      }
+    ]
+  },
+  "logistics": {
+    "version": "2026-11-01",
+    "policy": {
+      "prices": [
+        {
+          "item": "Delivery",
+          "amount": 12
+        }
+      ],
+      "actions": {
+        "refunded": "billing.refund"
+      }
+    },
+    "cases": [
+      {
+        "id": "approved-price",
+        "reply": "Delivery is $12.",
+        "expectedPass": true,
+        "expectedRules": []
+      },
+      {
+        "id": "wrong-price",
+        "reply": "Delivery is $22.",
+        "expectedPass": false,
+        "expectedRules": [
+          "price:mismatch"
+        ]
+      },
+      {
+        "id": "unrecorded-refund",
+        "reply": "I refunded you.",
+        "expectedPass": false,
+        "expectedRules": [
+          "action:unrecorded"
+        ]
+      }
+    ]
+  },
+  "booking": {
+    "version": "2026-11-01",
+    "policy": {
+      "prices": [
+        {
+          "item": "Consultation",
+          "amount": 60
+        }
+      ],
+      "actions": {
+        "refunded": "billing.refund"
+      }
+    },
+    "cases": [
+      {
+        "id": "approved-price",
+        "reply": "Consultation is $60.",
+        "expectedPass": true,
+        "expectedRules": []
+      },
+      {
+        "id": "wrong-price",
+        "reply": "Consultation is $70.",
+        "expectedPass": false,
+        "expectedRules": [
+          "price:mismatch"
+        ]
+      },
+      {
+        "id": "unrecorded-refund",
+        "reply": "I refunded you.",
+        "expectedPass": false,
+        "expectedRules": [
+          "action:unrecorded"
+        ]
+      }
+    ]
+  },
+  "api-service": {
+    "version": "2026-11-01",
+    "policy": {
+      "prices": [
+        {
+          "item": "API plan",
+          "amount": 25
+        }
+      ],
+      "actions": {
+        "refunded": "billing.refund"
+      }
+    },
+    "cases": [
+      {
+        "id": "approved-price",
+        "reply": "API plan is $25.",
+        "expectedPass": true,
+        "expectedRules": []
+      },
+      {
+        "id": "wrong-price",
+        "reply": "API plan is $35.",
+        "expectedPass": false,
+        "expectedRules": [
+          "price:mismatch"
+        ]
+      },
+      {
+        "id": "unrecorded-refund",
+        "reply": "I refunded you.",
+        "expectedPass": false,
+        "expectedRules": [
+          "action:unrecorded"
+        ]
+      }
+    ]
+  },
+  "digital-goods": {
+    "version": "2026-11-01",
+    "policy": {
+      "prices": [
+        {
+          "item": "Design pack",
+          "amount": 35
+        }
+      ],
+      "actions": {
+        "refunded": "billing.refund"
+      }
+    },
+    "cases": [
+      {
+        "id": "approved-price",
+        "reply": "Design pack is $35.",
+        "expectedPass": true,
+        "expectedRules": []
+      },
+      {
+        "id": "wrong-price",
+        "reply": "Design pack is $45.",
+        "expectedPass": false,
+        "expectedRules": [
+          "price:mismatch"
+        ]
+      },
+      {
+        "id": "unrecorded-refund",
+        "reply": "I refunded you.",
+        "expectedPass": false,
+        "expectedRules": [
+          "action:unrecorded"
+        ]
+      }
+    ]
+  }
+}

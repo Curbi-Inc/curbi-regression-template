@@ -1,6 +1,6 @@
 # Check what your AI agent says before your customer sees it
 
-**Paste once. Under a second. No signup.**
+**Paste once. No signup. No dependency install.**
 
 ```sh
 curl -s https://api.curbi.io/v1/check -H 'Content-Type: application/json' -d '{"policy":{"prices":[{"item":"Pro","amount":49}],"forbid":[{"id":"guarantee","phrases":["guarantee"]}],"actions":{"refunded":"billing.refund"}},"reply":"Done! I'\''ve refunded you, Pro is just $29, and we guarantee it."}'
@@ -29,6 +29,35 @@ The four synthetic cases are a correct price, a wrong price, a refund the agent 
 2. Choose **Download this regression test**.
 3. Drop the `.test.mjs` file here and run `node --test`.
 
+## Start with your use case
+
+Create a NEW project directory from a reviewed local copy of this repository:
+
+```sh
+node seed.mjs saas ../my-agent-checks
+cd ../my-agent-checks
+node --test
+```
+
+The command refuses existing directories and symlinks. It copies a policy,
+three synthetic checks, the existing runner, CI workflow and Cursor project rule.
+No network is used until you run the tests; tests send fixtures to the public API.
+
+Profiles: `saas`, `ecommerce`, `support`, `marketplace`, `subscriptions`,
+`courses`, `logistics`, `booking`, `api-service`, `digital-goods`.
+Run `node seed.mjs --list`. These configure price and refund-claim checks,
+not tax, booking, delivery or commerce enforcement. Review sample rules first.
+
+Generated projects include `.cursor/rules/curbi.mdc`. For an existing project,
+review and copy that file yourself without replacing existing rules.
+[Cursor's current rule format](https://cursor.com/docs/rules) is preferred over
+the optional legacy [`.cursorrules`](rules/.cursorrules).
+Rules guide an assistant; they do not intercept tool execution.
+
+Run `node scripts/verify-seeds.mjs` to create ten temporary projects and replay
+30 synthetic checks. The report is a smoke test, not a model benchmark.
+[Distribution packet and submission boundaries](distribution/README.md).
+
 ## Curbi checks its own team
 
 On 2026-10-29, a release report was checked against its permitted claims and recorded actions before publication. The record showed a code push, with no deployment:
@@ -41,13 +70,13 @@ That's the product: an AI claiming more than its record shows gets caught, inclu
 
 ## Connect your assistant
 
-Claude, Claude Code, ChatGPT, LangChain and Vercel AI SDK setups: **[curbi.io/connect](https://curbi.io/connect/)**. One URL, six read-only MCP tools, no sign-in during the preview:
+Claude, Claude Code, ChatGPT, LangChain and Vercel AI SDK setups: **[curbi.io/connect](https://curbi.io/connect/)**. One URL, six free, rate-limited read-only MCP tools:
 
 ```sh
 claude mcp add --transport http curbi https://api.curbi.io/mcp
 ```
 
-**From Python,** set a descriptive User-Agent. Cloudflare refuses library defaults such as `Python-urllib` at the edge on this host; `curbi-quickstart/1.0` works. A dedicated API host that accepts defaults is in progress.
+**From Python:** the dedicated `api.curbi.io` host accepts default clients; no User-Agent workaround is required. See [connection examples](https://curbi.io/connect/).
 
 ## What a pass does and does not mean
 
@@ -59,8 +88,8 @@ claude mcp add --transport http curbi https://api.curbi.io/mcp
 
 - **What leaves your machine:** the tests send your policy, replies and supplied records to the endpoint. Only synthetic data is included; don't commit secrets, real customer records or private replies to a public fork.
 - **Logging:** the checker does not persist request bodies (this is not a guarantee about every infrastructure log).
-- **Preview limits:** 50 cases per batch, 4,000 characters per reply, a 64 KiB request, a 15-second timeout.
-- **CI endpoint:** CI uses the same deployment through `https://curbi-landing.pages.dev/api/v1/check`, because the canonical domain refused the first hosted runner. `CURBI_API` selects your own endpoint; it receives the same data.
-- **Failures:** non-200 or non-JSON responses fail closed with an endpoint or access error, not a changed verdict. The preview can change, so a failure may mean API drift or network trouble rather than an agent defect.
+- **Public request limits:** 50 cases per batch, 4,000 characters per reply, a 64 KiB request, a 15-second timeout.
+- **CI endpoint:** CI uses `https://api.curbi.io/v1/check`. `CURBI_API` selects your own endpoint; it receives the same data.
+- **Failures:** non-200 or non-JSON responses fail closed with an endpoint or access error, not a changed verdict. A failure may mean API drift or network trouble rather than an agent defect.
 
 MIT licensed. Demo tests only, not Curbi's private implementation. Support: [hello@curbi.io](mailto:hello@curbi.io) · [status.json](https://curbi.io/status.json) (an unsigned Curbi-published release report) · `agent-start.json` here is a discovery snapshot; refresh it from [the live manifest](https://curbi.io/agent-start.json).

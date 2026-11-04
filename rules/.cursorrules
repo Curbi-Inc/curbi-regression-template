@@ -1,0 +1,7 @@
+# Legacy Cursor rule: prefer .cursor/rules/curbi.mdc for new projects.
+Use the reviewed cases.json policy. Run node --test after reply or policy changes.
+Report observed results; network/schema errors are failures, not passes.
+Never invent completed provider records. A pass grants no permission and does
+not prove provider completion. Keep private data and keys out of fixtures.
+The runner sends fixtures to https://api.curbi.io/v1/check.
+These are assistant instructions, not tool interception or an authorization gate.
