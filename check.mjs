@@ -7,6 +7,7 @@
 import {readFileSync, writeFileSync, renameSync, rmSync} from 'node:fs';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import {resolve} from 'node:path';
+import {isDeepStrictEqual} from 'node:util';
 
 const USAGE = 'Usage: node check.mjs "<reply>" [--save <case-id>] [--done <operation>]...';
 
@@ -31,7 +32,7 @@ export function parseArgs(argv) {
 // Terminal-safe: no control characters from a reply or a finding reach your terminal.
 const clean = s => String(s).replace(/[\u0000-\u001f\u007f-\u009f‪-‮⁦-⁩]/g, ' ').slice(0, 160);
 export const render = findings => findings.length
-  ? findings.map(f => `caught ${f.rule}: "${clean(f.text)}" (${clean(f.why)})`)
+  ? findings.map(f => `caught ${clean(f.rule)}: "${clean(f.text)}" (${clean(f.why)})`)
   : ['clean: no configured rule fired (not a guarantee, not permission to act)'];
 
 // The case the regression runner expects: rules sorted with duplicates kept, exactly as it compares them.
@@ -93,7 +94,11 @@ async function main() {
   if (args.save !== null) {
     const path = fileURLToPath(file);
     await withLock(path, () => {
-      const next = addCase(JSON.parse(readFileSync(path, 'utf8')), caseFrom(args.save, args.reply, record, result)), tmp = `${path}.${process.pid}.tmp`;
+      const current = JSON.parse(readFileSync(path, 'utf8'));
+      if (current.version !== suite.version || !isDeepStrictEqual(current.policy, suite.policy)) {
+        throw Error('The policy or version changed during this check. Run it again before saving.');
+      }
+      const next = addCase(current, caseFrom(args.save, args.reply, record, result)), tmp = `${path}.${process.pid}.tmp`;
       writeFileSync(tmp, serialize(next), {flag: 'wx'}); renameSync(tmp, path);
     });
     console.log(`saved ${args.save} to cases.json. Run node --test; review the expected verdict before you commit it.`);

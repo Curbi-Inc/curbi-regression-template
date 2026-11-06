@@ -12,7 +12,7 @@ test('arguments: one quoted reply, optional --save id and repeated --done operat
 test('findings print with their text and reason, and control characters never reach the terminal', () => {
   assert.deepEqual(render([{rule: 'price:mismatch', text: '$29', why: 'Starter is $49, not $29.'}]), ['caught price:mismatch: "$29" (Starter is $49, not $29.)']);
   assert.match(render([])[0], /^clean: no configured rule fired/);
-  assert.doesNotMatch(render([{rule: 'x', text: 'a\u001b[2Jb‮', why: 'c\nd'}])[0], /[\u0000-\u001f‮]/);
+  assert.doesNotMatch(render([{rule: 'x\u001b[2J\u0085\u202e', text: 'a\u001b[2Jb‮', why: 'c\nd'}])[0], /[\u0000-\u001f\u007f-\u009f\u202e]/);
 });
 test('a saved case is what the runner compares: verdict, and rules sorted with duplicates kept', () => {
   const c = caseFrom('two', 'Starter is $29 or $39.', null, {pass: false, findings: [{rule: 'price:mismatch'}, {rule: 'action:unrecorded'}, {rule: 'price:mismatch'}]});
