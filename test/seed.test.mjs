@@ -12,6 +12,7 @@ test('ten independent seeds produce runnable projects with matching policies', a
     const target=await seed(id,join(dir,id));
     assert.deepEqual(JSON.parse(await readFile(join(target,'cases.json'),'utf8')),suite);
     assert.equal(await readFile(join(target,'regression.test.mjs'),'utf8'),await readFile(new URL('../regression.test.mjs',import.meta.url),'utf8'));
+    assert.equal(await readFile(join(target,'check.mjs'),'utf8'),await readFile(new URL('../check.mjs',import.meta.url),'utf8'));
     assert.match(await readFile(join(target,'.cursor/rules/curbi.mdc'),'utf8'),/alwaysApply: true/);
     assert.match(await readFile(join(target,'.github/workflows/regression.yml'),'utf8'),/https:\/\/api.curbi.io\/v1\/check/);
     assert.equal(new Set(suite.cases.map(c=>c.id)).size,suite.cases.length);
