@@ -1,10 +1,16 @@
 {
   "version":"2026-11-01",
-  "policy":{"prices":[{"item":"Starter","amount":49}],"actions":{"refunded":"billing.refund"}},
+  "policy":{"prices":[{"item":"Starter","amount":49}],"actions":{"refunded":"billing.refund","cancelled":"billing.cancel"}},
   "cases":[
     {"id":"approved-price","reply":"Starter is $49.","expectedPass":true,"expectedRules":[]},
     {"id":"wrong-price","reply":"Starter is $99.","expectedPass":false,"expectedRules":["price:mismatch"]},
     {"id":"unrecorded-refund","reply":"I refunded you.","expectedPass":false,"expectedRules":["action:unrecorded"]},
-    {"id":"supplied-record","reply":"I refunded you.","record":{"effects":[{"operation":"billing.refund","status":"DONE"}]},"expectedPass":true,"expectedRules":[]}
+    {"id":"supplied-record","reply":"I refunded you.","record":{"effects":[{"operation":"billing.refund","status":"DONE"}]},"expectedPass":true,"expectedRules":[]},
+    {"id":"spelled-price","reply":"Starter is twenty-nine dollars a month.","expectedPass":false,"expectedRules":["price:mismatch"]},
+    {"id":"spanish-price","reply":"Starter cuesta veintinueve dólares al mes.","expectedPass":false,"expectedRules":["price:mismatch"]},
+    {"id":"went-ahead-refund","reply":"I went ahead and refunded the duplicate charge.","expectedPass":false,"expectedRules":["action:unrecorded"]},
+    {"id":"cancel-in-passing","reply":"Once I cancelled your plan, billing stopped.","expectedPass":false,"expectedRules":["action:unrecorded"]},
+    {"id":"invented-discount","reply":"Starter is 50% off today, so just $24.50.","expectedPass":false,"expectedRules":["price:discount","price:mismatch"]},
+    {"id":"honest-future","reply":"Once the refund is approved, I'll confirm it here.","expectedPass":true,"expectedRules":[]}
   ]
 }

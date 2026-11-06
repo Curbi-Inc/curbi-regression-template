@@ -7,11 +7,11 @@ export async function seed(profile, destination) {
   if (!Object.hasOwn(catalog, profile)) throw Error('Unknown profile. Use --list.');
   if (!destination) throw Error('Choose a NEW destination directory.');
   const files = new Map();
-  for (const name of ['regression.test.mjs', 'package.json', 'LICENSE', '.gitignore', '.github/workflows/regression.yml', 'rules/curbi.mdc']) {
+  for (const name of ['regression.test.mjs', 'check.mjs', 'package.json', 'LICENSE', '.gitignore', '.github/workflows/regression.yml', 'rules/curbi.mdc']) {
     files.set(name === 'rules/curbi.mdc' ? '.cursor/rules/curbi.mdc' : name, await readFile(new URL(name, import.meta.url)));
   }
   files.set('cases.json', JSON.stringify(catalog[profile], null, 2) + '\n');
-  files.set('README.md', `# ${profile} reply checks\n\nSynthetic examples. Review and adapt the policy before use.\n\nRun: node --test\n\nNode 20+, no dependency install or API key. Tests send cases.json policy, replies and records to https://api.curbi.io/v1/check. Do not add private data or secrets. Network or API errors fail the run; they are not checker verdicts.\n\nA pass means no configured rule fired, not authorization or provider completion. Cursor rules guide the assistant; they do not intercept execution.\n`);
+  files.set('README.md', `# ${profile} reply checks\n\nSynthetic examples. Review and adapt the policy before use.\n\nRun: node --test\n\nCheck your own reply and keep it as a test: node check.mjs "<reply>" --save <case-id>\n\nNode 20+, no dependency install or API key. Tests send cases.json policy, replies and records to https://api.curbi.io/v1/check. Do not add private data or secrets. Network or API errors fail the run; they are not checker verdicts.\n\nA pass means no configured rule fired, not authorization or provider completion. Cursor rules guide the assistant; they do not intercept execution.\n`);
   const target = resolve(destination);
   // Exclusive creation: never merge into or replace an existing project or symlink.
   await mkdir(target);

@@ -22,9 +22,18 @@ The request took 442–571 ms in three independent live runs (2026-10-29). Deter
 2. Run `node --test`. Node 20+, no install, no API key.
 3. Push. The included GitHub Actions workflow runs the same four checks on every push and pull request.
 
-The four synthetic cases are a correct price, a wrong price, a refund the agent claims but never made, and a refund with a DONE record. Edit one expected rule and the run fails; restore it and it passes. That's your regression suite.
+The ten synthetic cases include mistakes that are easy to miss with a regex: a price written out ("twenty-nine dollars"), a price in Spanish, a refund mentioned in passing ("I went ahead and refunded"), a cancellation inside a clause ("Once I cancelled your plan"), and a discount nobody approved. Each run prints what was caught and why. Edit one expected rule and the run fails; restore it and it passes. That's your regression suite.
 
-**Add your own catch:**
+**Check your own agent's reply, and keep it:**
+
+```sh
+node check.mjs "Starter is just \$29 if you upgrade today!" --save my-first-catch
+node --test
+```
+
+It prints each finding with the exact text and why, then appends the case to `cases.json` as one line. Review the expected verdict before you commit it: a saved case records what the checker said today. Add `--done billing.refund` to supply a DONE record (yours, not verified).
+
+**Or from the web:**
 1. Check a reply on [Policy Check](https://curbi.io/check/) or ask your AI through the [Curbi connector](https://curbi.io/connect/).
 2. Choose **Download this regression test**.
 3. Drop the `.test.mjs` file here and run `node --test`.
