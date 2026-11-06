@@ -4,7 +4,7 @@
 //   node check.mjs "I refunded you." --done billing.refund        the same reply with a DONE record you supply
 // Only data leaves your machine: cases.json's policy, your reply and any record go to the Check API. Nothing you paste is
 // executed. A saved case records what the checker said today; review it before you commit it.
-import {readFileSync, writeFileSync, renameSync} from 'node:fs';
+import {readFileSync, writeFileSync, renameSync, rmSync} from 'node:fs';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import {resolve} from 'node:path';
 
@@ -39,11 +39,33 @@ export function caseFrom(id, reply, record, result) {
   return {id, reply, ...(record ? {record} : {}), expectedPass: result.pass, expectedRules: result.findings.map(f => f.rule).sort()};
 }
 
+// Encoded size of the one request regression.test.mjs sends for the whole suite. The Check API caps a body at 64 KiB.
+export const BATCH_LIMIT = 65536;
+export const batchBytes = suite => Buffer.byteLength(JSON.stringify({version: suite.version, policy: suite.policy,
+  cases: suite.cases.map(({id, reply, record}) => ({id, reply, ...(record ? {record} : {})}))}), 'utf8');
+
 export function addCase(suite, c) {
   if (!Array.isArray(suite.cases)) throw Error('cases.json has no cases array.');
   if (suite.cases.some(x => x.id === c.id)) throw Error(`A case named ${c.id} already exists; pick another id.`);
   if (suite.cases.length >= 50) throw Error('cases.json already holds 50 cases, the per-request limit.');
-  return {...suite, cases: [...suite.cases, c]};
+  const next = {...suite, cases: [...suite.cases, c]}, bytes = batchBytes(next);
+  if (bytes > BATCH_LIMIT) throw Error(`Saving this case would make the regression batch ${bytes} bytes, past the 64 KiB API limit. Remove a case or shorten a reply first.`);
+  return next;
+}
+
+// One save at a time: an exclusive lock file, then cases.json is read again under the lock, so a save made meanwhile
+// is kept rather than overwritten by a stale copy.
+async function withLock(path, fn, waitMs = 5000) {
+  const lock = path + '.lock', until = Date.now() + waitMs;
+  for (;;) {
+    try { writeFileSync(lock, String(process.pid), {flag: 'wx'}); break; }
+    catch (e) {
+      if (e.code !== 'EEXIST') throw e;
+      if (Date.now() > until) throw Error(`Another save holds ${lock}. If no save is running, delete that file and retry.`);
+      await new Promise(r => setTimeout(r, 25));
+    }
+  }
+  try { return fn(); } finally { rmSync(lock, {force: true}); }
 }
 
 // One case per line, so a saved catch is a one-line diff.
@@ -56,8 +78,9 @@ export function serialize(suite) {
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   const file = new URL('./cases.json', import.meta.url), suite = JSON.parse(readFileSync(file, 'utf8'));
-  if (args.save !== null) addCase(suite, {id: args.save});   // a taken id or a full file fails here, before any request
   const record = args.done.length ? {effects: args.done.map(operation => ({operation, status: 'DONE'}))} : null;
+  // A taken id, a full file or an oversized batch fails here, before any request.
+  if (args.save !== null) addCase(suite, {id: args.save, reply: args.reply, ...(record ? {record} : {})});
   const endpoint = process.env.CURBI_API || 'https://api.curbi.io/v1/check';
   const r = await fetch(endpoint, {method: 'POST', signal: AbortSignal.timeout(15000), redirect: 'error',
     headers: {'Content-Type': 'application/json', Accept: 'application/json', 'User-Agent': 'Curbi-Regression-Starter/1.0'},
@@ -68,8 +91,11 @@ async function main() {
   for (const line of render(result.findings)) console.log(line);
   if (record) console.log('record: supplied by you, not verified by Curbi');
   if (args.save !== null) {
-    const next = addCase(suite, caseFrom(args.save, args.reply, record, result)), tmp = fileURLToPath(file) + '.tmp';
-    writeFileSync(tmp, serialize(next), {flag: 'wx'}); renameSync(tmp, fileURLToPath(file));
+    const path = fileURLToPath(file);
+    await withLock(path, () => {
+      const next = addCase(JSON.parse(readFileSync(path, 'utf8')), caseFrom(args.save, args.reply, record, result)), tmp = `${path}.${process.pid}.tmp`;
+      writeFileSync(tmp, serialize(next), {flag: 'wx'}); renameSync(tmp, path);
+    });
     console.log(`saved ${args.save} to cases.json. Run node --test; review the expected verdict before you commit it.`);
   }
 }
